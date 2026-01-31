@@ -1,0 +1,69 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: rag-chat-storage-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragchat
+    username: ragchat
+    password: ragchat
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ""
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  security:
+    # default (dev-friendly). prod/staging will override to JWT
+    mode: API_KEY
+    apiKey: ${APP_SECURITY_API_KEY:change-me}
+    userIdHeader: ${APP_SECURITY_USER_ID_HEADER:X-User-Id}
+    resolveRolesFromDb: ${APP_SECURITY_RESOLVE_ROLES_FROM_DB:true}
+    requireUserInDb: ${APP_SECURITY_REQUIRE_USER_IN_DB:true}
+    roles: ${APP_SECURITY_ROLES:API}
+    grantApiRole: ${APP_SECURITY_GRANT_API_ROLE:false}
+
+  rateLimit:
+    enabled: true
+    backend: REDIS
+    capacity: 120
+    refillDurationSeconds: 60
+
+  cors:
+    enabled: true
+    allowedOrigins: http://localhost:3000
+    allowedMethods: GET,POST,PATCH,DELETE,OPTIONS
+    allowedHeaders: Content-Type,X-API-Key,X-User-Id,Authorization
+
+  encryption:
+    enabled: false
+    provider: LOCAL
+    localKeyBase64: ""
+
+  retention:
+    enabled: true
+    hardDeleteAfterDays: 180
+    softDeleteGraceDays: 30
+    cron: "0 0 3 * * *"

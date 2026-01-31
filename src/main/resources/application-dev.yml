@@ -1,0 +1,14 @@
+logging:
+  level:
+    root: INFO
+    com.example.ragchat: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+
+app:
+  security:
+    mode: API_KEY

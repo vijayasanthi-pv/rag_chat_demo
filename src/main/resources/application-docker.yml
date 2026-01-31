@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/${POSTGRES_DB:ragchat}
+    username: ${POSTGRES_USER:ragchat}
+    password: ${POSTGRES_PASSWORD:ragchat}
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+      password: ""
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://host.docker.internal:8082/realms/ragchat
