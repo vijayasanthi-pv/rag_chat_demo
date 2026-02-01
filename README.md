@@ -61,19 +61,36 @@ This means the `X-User-Id` must exist in `app_users` and be `active=true`. Roles
 (e.g., `CHAT_READ`, `CHAT_WRITE`, `CHAT_DELETE`, `CHAT_ADMIN`).
 
 For convenience, migration **V3** seeds:
-- `u1` with `CHAT_ADMIN`
-- `u2` with `CHAT_READ`
+- `admin` with `CHAT_ADMIN`, `CHAT_READ`, `CHAT_WRITE`, `CHAT_DELETE`
+- `u1` with `CHAT_READ`
 
 You can manage users/roles via the admin API:
 - `POST /api/v1/admin/users`
 - `PUT /api/v1/admin/users/{userId}/roles`
 
 
-Example:
+Example (use the **seeded** admin user to manage users/roles):
 
 ```bash
+# API key configured via APP_SECURITY_API_KEY
 export API_KEY=change-me
-export USER_ID=u-123
+
+# Seeded admin (has CHAT_ADMIN + all chat roles)
+export ADMIN_USER_ID=admin
+
+# Create a new user with READ-only access
+curl -i -X POST "http://localhost:8080/api/v1/admin/users" \
+  -H "X-API-Key: ${API_KEY}" \
+  -H "X-User-Id: ${ADMIN_USER_ID}" \
+  -H "Content-Type: application/json" \
+  -d '{"userId":"u3","displayName":"User 3","roles":["CHAT_READ"],"active":true}'
+
+# Grant additional roles later (example: add write)
+curl -i -X PUT "http://localhost:8080/api/v1/admin/users/u3/roles" \
+  -H "X-API-Key: ${API_KEY}" \
+  -H "X-User-Id: ${ADMIN_USER_ID}" \
+  -H "Content-Type: application/json" \
+  -d '{"roles":["CHAT_READ","CHAT_WRITE"]}'
 ```
 
 ### Option B: JWT mode (OAuth2 Resource Server)
