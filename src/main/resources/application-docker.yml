@@ -10,8 +10,3 @@ spring:
       port: 6379
       password: ""
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://host.docker.internal:8082/realms/ragchat

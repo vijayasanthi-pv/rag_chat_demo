@@ -8,11 +8,9 @@ Production-style microservice to store **chat sessions** and **chat messages** g
 - PostgreSQL (JSONB for retrieved context)
 - Flyway migrations
 - **Security modes**:
-  - `API_KEY` (simple case-study mode) OR
-  - `JWT` (OAuth2 Resource Server)
+  - `API_KEY` (simple case-study mode) 
 - **Rate limiting**:
-  - `REDIS` backend for multi-instance deployments (recommended)
-  - `IN_MEMORY` fallback for single instance
+  - `REDIS` 
 - **Soft delete + retention purge job**
 - Optional **application-level encryption at rest** (AES-GCM)
 - Centralized logging with request correlation id (MDC)
@@ -62,9 +60,8 @@ This means the `X-User-Id` must exist in `app_users` and be `active=true`. Roles
 
 For convenience, migration **V3** seeds:
 - `admin` with `CHAT_ADMIN`, `CHAT_READ`, `CHAT_WRITE`, `CHAT_DELETE`
-- `u1` with `CHAT_READ`
 
-You can manage users/roles via the admin API:
+Manage users/roles via the admin API:
 - `POST /api/v1/admin/users`
 - `PUT /api/v1/admin/users/{userId}/roles`
 
@@ -92,21 +89,6 @@ curl -i -X PUT "http://localhost:8080/api/v1/admin/users/u3/roles" \
   -H "Content-Type: application/json" \
   -d '{"roles":["CHAT_READ","CHAT_WRITE"]}'
 ```
-
-### Option B: JWT mode (OAuth2 Resource Server)
-
-Set:
-- `APP_SECURITY_MODE=JWT`
-- Configure one of:
-  - `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=...`
-  - `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=...`
-
-Then call APIs with:
-- `Authorization: Bearer <JWT>`
-
-User scoping uses the JWT subject (`sub`) by default (`Authentication#getName()`).
-
----
 
 ## APIs
 
@@ -228,13 +210,12 @@ This uses AES-GCM and stores ciphertext with a prefix (`enc:v1:`). Responses are
 
 ## Local run (without Docker)
 
-Requirements: Java 21, PostgreSQL 16+, Redis 7+ (if using REDIS rate limit)
+Requirements: Java 21, PostgreSQL 15, Redis 7+ (if using REDIS rate limit)
 
 ```bash
 export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/ragchat
 export SPRING_DATASOURCE_USERNAME=ragchat
 export SPRING_DATASOURCE_PASSWORD=ragchat
-export APP_SECURITY_MODE=API_KEY
 export APP_SECURITY_API_KEY=change-me
 mvn spring-boot:run
 ```
@@ -244,6 +225,6 @@ mvn spring-boot:run
 ## Production hardening ideas
 
 - Use **Redis / clustered** and add **ShedLock** so retention purge runs once across replicas.
-- Replace the case-study identity header with full **OIDC/JWT scopes/roles** for authZ.
+- Can update authN and authZ with JWT authentication strategy and using any resource authentication server like Keycloak
 - Store encryption keys in a **KMS** and rotate keys periodically.
-- Add per-tenant quotas, audit logs, and GDPR-style export/delete workflows.
+- Add per-tenant quotas, audit logs

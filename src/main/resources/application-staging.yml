@@ -8,14 +8,3 @@ management:
     web:
       exposure:
         include: health,info,metrics
-
-app:
-  security:
-    mode: JWT
-
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8082/realms/ragchat

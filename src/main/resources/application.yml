@@ -36,9 +36,6 @@ management:
 
 app:
   security:
-    # default (dev-friendly). prod/staging will override to JWT
-    mode: API_KEY
-    apiKey: ${APP_SECURITY_API_KEY:change-me}
     userIdHeader: ${APP_SECURITY_USER_ID_HEADER:X-User-Id}
     resolveRolesFromDb: ${APP_SECURITY_RESOLVE_ROLES_FROM_DB:true}
     requireUserInDb: ${APP_SECURITY_REQUIRE_USER_IN_DB:true}
